@@ -22,30 +22,30 @@ print(f'Using device: {device}')
 # Cell 3
 class IrisTrainDataset(Dataset):
     def __init__(self):
-        dataFrame = pd.read_excel('data/iris_example/iris_train.xlsx')
-        self.input_data_frame = dataFrame[['sepalLength', 'sepalWidth', 'petalLength', 'petalWidth']]
-        self.target_data_frame = dataFrame['irisClass']
+        data_frame = pd.read_excel('data/iris_example/iris_train.xlsx')
+        self.input_data_frame = data_frame[['sepalLength', 'sepalWidth', 'petalLength', 'petalWidth']]
+        self.target_data_frame = data_frame['irisClass']
 
     def __len__(self):
         return len(self.input_data_frame)
     
     def __getitem__(self, index):
-        x = torch.tensor(self.input_data_frame.iloc[(index)], dtype = torch.float32)
+        x = torch.tensor(self.input_data_frame.iloc[index], dtype = torch.float32)
         t = torch.tensor(self.target_data_frame.iloc[index], dtype = torch.int64) 
 
         return x, t 
     
 class IrisTestDataset(Dataset):
     def __init__(self):
-        dataFrame = pd.read_excel('data/iris_example/iris_test.xlsx')                
-        self.input_data_frame = dataFrame[['sepalLength', 'sepalWidth', 'petalLength', 'petalWidth']]
-        self.target_data_frame = dataFrame['irisClass']
+        data_frame = pd.read_excel('data/iris_example/iris_test.xlsx')                
+        self.input_data_frame = data_frame[['sepalLength', 'sepalWidth', 'petalLength', 'petalWidth']]
+        self.target_data_frame = data_frame['irisClass']
 
     def __len__(self):
         return len(self.input_data_frame)
 
     def __getitem__(self, index):
-        x = torch.tensor(self.input_data_frame.iloc[(index)], dtype = torch.float32)
+        x = torch.tensor(self.input_data_frame.iloc[index], dtype = torch.float32)
         t = torch.tensor(self.target_data_frame.iloc[index], dtype = torch.int64) 
 
         return x, t
@@ -100,7 +100,8 @@ class NeuralNetwork(nn.Module):
             nn.Softmax(dim = 1)
         )
 
-        self.linear_stack.apply(self.weight_initializer)
+        for module in self.modules():		
+            module.apply(self.parameter_initializer)
 
     def forward(self, x):
         y = self.linear_stack(x)

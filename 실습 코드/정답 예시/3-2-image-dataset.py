@@ -144,10 +144,8 @@ class NeuralNetwork(nn.Module):
             nn.ConvTranspose2d(in_channels = 8, out_channels = 1, kernel_size = 2, stride = 2)
         )
 
-        self.cnn_stack1.apply(self.weight_initializer)
-        self.cnn_stack2.apply(self.weight_initializer)
-        self.decnn_stack1.apply(self.weight_initializer)
-        self.decnn_stack2.apply(self.weight_initializer)
+        for module in self.modules():		
+            module.apply(self.parameter_initializer)
 
     def forward(self, x_left, x_right):
         x = torch.concat(

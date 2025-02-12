@@ -76,10 +76,8 @@ class NeuralNetwork(nn.Module):
             nn.Softmax(dim = 1)
         )
 
-        self.softmax = nn.Softmax(dim = 1) 
-
-        self.cnn_stack.apply(self.weight_initializer) 
-        self.linear_stack.apply(self.weight_initializer)
+        for module in self.modules():		
+            module.apply(self.parameter_initializer)
 
     def forward(self, x):
         x = self.cnn_stack(x)

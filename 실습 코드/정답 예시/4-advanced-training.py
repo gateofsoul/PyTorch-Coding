@@ -86,11 +86,8 @@ class NeuralNetwork(nn.Module):
             nn.Softmax(dim = 1)
         )
         
-        self.cnn_stack1.apply(self.weight_initializer)
-        self.cnn_stack2.apply(self.weight_initializer)
-        self.linear_stack1.apply(self.weight_initializer)
-        self.linear_stack2.apply(self.weight_initializer)
-        self.softmax_stack.apply(self.weight_initializer)
+        for module in self.modules():		
+            module.apply(self.parameter_initializer)
         
     @autocast(device_type = device)
     def forward(self, x):

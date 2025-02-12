@@ -60,24 +60,27 @@ class NeuralNetwork(nn.Module):
             nn.Tanh(),
             nn.Linear(256, 256), 
             nn.Tanh(),
-            nn.Linear(256, 256), 
+            nn.Linear(256, 128), 
             nn.Tanh(),
-            nn.Linear(256, 64), 
+            nn.Linear(128, 64), 
             nn.Tanh(),
-            nn.Linear(64, 10),
+            nn.Linear(64, 32),
+            nn.Tanh()
         )
 
         self.skip_connection_stack = nn.Sequential(
             nn.Flatten(start_dim = 1),
-            nn.Linear(28 * 28, 128),
+            nn.Linear(28 * 28, 64),
             nn.ReLU(),
-            nn.Linear(128, 10)
+            nn.Linear(64, 32),
+            nn.ReLU()
         )
 
-        self.softmax = nn.Softmax(dim = 1) 
+        self.last_linear = nn.Linear(32, 10) 
+        self.softmax = nn.Softmax(dim = 1)
 
-        self.linear_stack.apply(self.weight_initializer) 
-        self.skip_connection_stack.apply(self.weight_initializer) 
+        for module in self.modules():		
+            module.apply(self.parameter_initializer)
 
     def forward(self, x):
         x1 = self.linear_stack(x)  
