@@ -23,8 +23,8 @@ print(f'Using device: {device}')
 class IrisTrainDataset(Dataset):
     def __init__(self):
         data_frame = pd.read_excel('data/iris_example/iris_train.xlsx')
-        self.input_data_frame = data_frame[['sepalLength', 'sepalWidth', 'petalLength', 'petalWidth']]
-        self.target_data_frame = data_frame['irisClass']
+        self.input_data_frame = data_frame[['sepal_length', 'sepal_width', 'petal_length', 'petal_width']]
+        self.target_data_frame = data_frame['iris_class']
 
     def __len__(self):
         return len(self.input_data_frame)
@@ -38,8 +38,8 @@ class IrisTrainDataset(Dataset):
 class IrisTestDataset(Dataset):
     def __init__(self):
         data_frame = pd.read_excel('data/iris_example/iris_test.xlsx')                
-        self.input_data_frame = data_frame[['sepalLength', 'sepalWidth', 'petalLength', 'petalWidth']]
-        self.target_data_frame = data_frame['irisClass']
+        self.input_data_frame = data_frame[['sepal_length', 'sepal_width', 'petal_length', 'petal_width']]
+        self.target_data_frame = data_frame['iris_class']
 
     def __len__(self):
         return len(self.input_data_frame)
