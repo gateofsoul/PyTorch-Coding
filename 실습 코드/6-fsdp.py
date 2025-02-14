@@ -56,7 +56,7 @@ def get_data_loader(distributed, dataset, mini_batch_size, shuffle):
 # Cell 4
 # -------- ANN architecture ------ #
 class NeuralNetwork(nn.Module):
-    def weight_initializer(self, layer):
+    def parameter_initializer(self, layer):
         if hasattr(layer, 'weight') and hasattr(layer, 'bias'):
             torch.nn.init.xavier_normal_(layer.weight) 
             torch.nn.init.zeros_(layer.bias)
