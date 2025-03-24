@@ -5,3 +5,4 @@
 Multiple-node 환경일 때, FSDP 실습 코드의 checkpoint save/load 부분이 제대로 돌아가지 않습니다.
 코드를 여러 형태로 수정도 해보고, SSH file system을 통해 여러 노드가 공유하는 폴더에 checkpoint를 저장하는 방법도 시도해 보았으나 여전히 해결하지 못한 상태입니다.
 현재 PyTorch에서 공개한 자료로는 이 문제를 제대로 해결할 수 없어, 일단은 코드를 현재 그대로 공개하겠습니다.
+다만, checkpoint를 제외한 나머지 기능은 multiple-node에서 정상작동하므로 마음껏 활용하셔도 됩니다.
