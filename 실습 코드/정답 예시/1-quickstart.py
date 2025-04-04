@@ -52,7 +52,7 @@ class NeuralNetwork(nn.Module):
         self.fc3 = nn.Linear(512, 10)
 
         for layer in self.modules():
-            if hasattr(layer, 'weight') and hasattr(layer, 'bias'):
+            if isinstance(layer, nn.Linear):
                 torch.nn.init.xavier_normal_(layer.weight)
                 torch.nn.init.zeros_(layer.bias)
 

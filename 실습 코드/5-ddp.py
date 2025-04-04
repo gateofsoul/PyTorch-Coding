@@ -50,7 +50,7 @@ def get_data_loader(dataset, mini_batch_size, shuffle):
 # -------- ANN architecture ------ #
 class NeuralNetwork(nn.Module):
     def parameter_initializer(self, layer):
-        if hasattr(layer, 'weight') and hasattr(layer, 'bias'):
+        if isinstance(layer, nn.Linear) or isinstance(layer, nn.Conv2d):
             torch.nn.init.xavier_normal_(layer.weight) 
             torch.nn.init.zeros_(layer.bias)
             
