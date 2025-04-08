@@ -207,7 +207,9 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
 
     training_data_loader = get_data_loader(distributed = True, dataset = dataset, mini_batch_size = mini_batch_size, shuffle = True)
 
-    model = NeuralNetwork()
+    model = NeuralNetwork().to(local_rank)
+    
+    torch.cuda.set_device(local_rank)
     fsdp_model = FSDP(
         model,
         auto_wrap_policy    = functools.partial(wrap.size_based_auto_wrap_policy, min_num_params = 512),
