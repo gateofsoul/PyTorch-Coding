@@ -11,5 +11,5 @@ Multiple-node 환경일 때, FSDP 실습 코드의 checkpoint save/load 부분�
 nn.LayerNormr과 같은 일부 레이어의 경우, weight와 bias atribute가 있음에도 xavier_normal_을 활용할 수 없기 때문에,
 예시 코드에서 parameter_initializer method의 내용을 수정했습니다.
 
-2025.04.07
-DDP와 FSDP에서 model을 초기화하고 FSDP 환경으로 전환하는 방법 및 dist.barrier()의 설명이 수정되었습니다.
+2025.04.08
+DDP와 FSDP대한 각종 내용이 PyTorch 2.4 이후 버전에 맞게 수정되었습니다.

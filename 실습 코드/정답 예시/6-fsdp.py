@@ -130,7 +130,7 @@ class NeuralNetwork(nn.Module):
 
 
 # Cell 5
-class DistributeCheckpoint(Stateful):
+"""class DistributeCheckpoint(Stateful):
     def __init__(self, fsdp_model, optimizer, scheduler):
         self.fsdp_model = fsdp_model
         self.optimizer  = optimizer
@@ -166,7 +166,7 @@ def load_checkpoint(fsdp_model, optimizer, scheduler):
     checkpoint = {
         'checkpoint' : DistributeCheckpoint(fsdp_model, optimizer, scheduler)
     }
-    dcp.load(checkpoint, checkpoint_id = 'fsdp_checkpoint')
+    dcp.load(checkpoint, checkpoint_id = 'fsdp_checkpoint')"""
     
 # -------- ANN Training -------- #
 def train(data_loader, fsdp_model, optimizer, accumulation_number = 1):
