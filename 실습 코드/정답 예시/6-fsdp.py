@@ -18,13 +18,10 @@ from torch.distributed.fsdp import (
     wrap 			
 )
 
-import torch.distributed.checkpoint as dcp
-from torch.distributed.checkpoint.stateful import Stateful
-from torch.distributed.checkpoint.state_dict import (
-    get_state_dict, 
-    set_state_dict, 
-    get_model_state_dict, 
-    StateDictOptions
+from torch.distributed.fsdp import (
+    StateDictType, 
+    FullStateDictConfig, 
+    FullOptimStateDictConfig
 )
 
 import torchvision
@@ -130,43 +127,47 @@ class NeuralNetwork(nn.Module):
 
 
 # Cell 5
-"""class DistributeCheckpoint(Stateful):
-    def __init__(self, fsdp_model, optimizer, scheduler):
-        self.fsdp_model = fsdp_model
-        self.optimizer  = optimizer
-        self.scheduler  = scheduler
+def save_checkpoint(fsdp_model, fsdp_optimizer, scheduler):
+    FSDP.set_state_dict_type(
+        fsdp_model,
+        StateDictType.FULL_STATE_DICT,
+        FullStateDictConfig(offload_to_cpu = True),
+        FullOptimStateDictConfig(offload_to_cpu = True)
+    )
+
+    fsdp_model_state        = fsdp_model.state_dict()
+    fsdp_optimizer_state    = fsdp_optimizer.state_dict()
+    fsdp_optimizer_state    = FSDP.optim_state_dict(
+        fsdp_model,
+        fsdp_optimizer,
+        optim_state_dict = fsdp_optimizer_state
+    )
+
+    checkpoint = {
+        'model_state'       : fsdp_model_state,
+        'optimizer_state'   : fsdp_optimizer_state,
+        'scheduler_state'   : scheduler.state_dict()
+    }
+
+    local_rank = int(os.environ['LOCAL_RANK'])
+    if local_rank == 0 : torch.save(checkpoint, 'fsdp_checkpoint.pth')
+
+def load_checkpoint(fsdp_model, fsdp_optimizer, scheduler):
+    checkpoint = torch.load('fsdp_checkpoint.pth', weights_only = False)
     
-    def state_dict(self):
-        model_state, optimizer_state = get_state_dict(self.fsdp_model, self.optimizer)
-        checkpoint_state = {
-            'model_state'       : model_state,
-            'optimizer_state'   : optimizer_state,
-            'scheduler_state'   : self.scheduler.state_dict()
-        }
+    FSDP.set_state_dict_type(
+        fsdp_model,
+        StateDictType.FULL_STATE_DICT,
+        FullStateDictConfig(offload_to_cpu = True),
+        FullOptimStateDictConfig(offload_to_cpu = True)
+    )
 
-        return checkpoint_state
+    fsdp_model.load_state_dict(checkpoint['model_state'])
 
-    def load_state_dict(self, checkpoint_state):
-        set_state_dict(
-            self.fsdp_model, 
-            self.optimizer, 
-            model_state_dict = checkpoint_state['model_state'], 
-            optim_state_dict = checkpoint_state['optimizer_state']
-        )
+    fsdp_optimizer_state = FSDP.optim_state_dict_to_load(fsdp_model, fsdp_optimizer, checkpoint['optimizer_state'])
+    fsdp_optimizer.load_state_dict(fsdp_optimizer_state)
 
-        self.scheduler.load_state_dict(checkpoint_state['scheduler_state'])
-
-def save_checkpoint(fsdp_model, optimizer, scheduler):
-    checkpoint = {
-        'checkpoint' : DistributeCheckpoint(fsdp_model, optimizer, scheduler)
-    }
-    dcp.save(checkpoint, checkpoint_id = 'fsdp_checkpoint')
-
-def load_checkpoint(fsdp_model, optimizer, scheduler):
-    checkpoint = {
-        'checkpoint' : DistributeCheckpoint(fsdp_model, optimizer, scheduler)
-    }
-    dcp.load(checkpoint, checkpoint_id = 'fsdp_checkpoint')"""
+    scheduler.load_state_dict(checkpoint['scheduler_state'])
     
 # -------- ANN Training -------- #
 def train(data_loader, fsdp_model, optimizer, accumulation_number = 1):
@@ -224,7 +225,7 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size = 1, gamma = 0.5)
 
     current_epoch = 0
-    if os.path.exists('fsdp_checkpoint/.metadata'):
+    if os.path.exists('fsdp_checkpoint.pth'):
         load_checkpoint(fsdp_model, optimizer, scheduler)
         current_epoch = scheduler.last_epoch
 
@@ -252,7 +253,7 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
             save_checkpoint(fsdp_model, optimizer, scheduler)
 
             if local_rank == 0:
-                print(f'Saved training checkpoint at {t + 1} epochs under "fsdp_checkpoint"\n' +
+                print(f'Saved training checkpoint at {t + 1} epochs to fsdp_checkpoint.pth\n' +
                       '\n', 
                       end = ''
                 )
@@ -267,15 +268,16 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
               '-------------------------------\n',
               end = ''
         )
-    
-    state_dict_option = StateDictOptions(
-        full_state_dict = True, 
-        cpu_offload = True
+
+    FSDP.set_state_dict_type(
+        fsdp_model,
+        StateDictType.FULL_STATE_DICT,
+        FullStateDictConfig(offload_to_cpu = True)
     )
-    model_state = get_model_state_dict(fsdp_model, options = state_dict_option)
+    fsdp_model_state = fsdp_model.state_dict()
 
     if global_rank == 0:
-        torch.save(model_state, 'model.pth')
+        torch.save(fsdp_model_state, 'model.pth')
 
         print('Saved PyTorch ANN parameters to model.pth\n' +
               '-------------------------------\n',
