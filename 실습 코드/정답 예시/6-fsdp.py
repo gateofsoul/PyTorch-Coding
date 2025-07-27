@@ -131,8 +131,8 @@ def save_checkpoint(fsdp_model, fsdp_optimizer, scheduler):
     FSDP.set_state_dict_type(
         fsdp_model,
         StateDictType.FULL_STATE_DICT,
-        FullStateDictConfig(rank0_only = True, offload_to_cpu = True),
-        FullOptimStateDictConfig(rank0_only = True, offload_to_cpu = True)
+        FullStateDictConfig(),
+        FullOptimStateDictConfig()
     )
 
     fsdp_model_state        = fsdp_model.state_dict()
@@ -158,8 +158,8 @@ def load_checkpoint(fsdp_model, fsdp_optimizer, scheduler):
     FSDP.set_state_dict_type(
         fsdp_model,
         StateDictType.FULL_STATE_DICT,
-        FullStateDictConfig(rank0_only = True, offload_to_cpu = True),
-        FullOptimStateDictConfig(rank0_only = True, offload_to_cpu = True)
+        FullStateDictConfig(),
+        FullOptimStateDictConfig()
     )
 
     fsdp_model.load_state_dict(checkpoint['model_state'])
@@ -272,7 +272,7 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
     FSDP.set_state_dict_type(
         fsdp_model,
         StateDictType.FULL_STATE_DICT,
-        FullStateDictConfig(rank0_only = True, offload_to_cpu = True)
+        FullStateDictConfig()
     )
     fsdp_model_state = fsdp_model.state_dict()
 
