@@ -234,7 +234,7 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
                    '\n', 
                    end = ''
             )
-        dist.barrier()
+        dist.barrier(device_ids = [local_rank])
 
     for t in range(current_epoch, max_epoch):
         training_data_loader.sampler.set_epoch(t)
@@ -247,7 +247,7 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
 
             if t + 1 < max_epoch:
                 print('\n', end = '')
-        dist.barrier()
+        dist.barrier(device_ids = [local_rank])
         
         if (t + 1) % checkpoint_interval == 0 and (t + 1) != max_epoch: 	
             save_checkpoint(fsdp_model, optimizer, scheduler)
@@ -257,7 +257,7 @@ def training_loop(dataset, mini_batch_size, max_epoch, checkpoint_interval, accu
                       '\n', 
                       end = ''
                 )
-        dist.barrier()
+        dist.barrier(device_ids = [local_rank])
     
     if global_rank == 0:
         excution_time, peak_VRAM_usage = get_cuda_performace_record()
@@ -354,7 +354,7 @@ if __name__ == '__main__':
 
     if local_rank == 0:
         training_dataset = get_dataset(train = True, download = True)
-    dist.barrier()
+    dist.barrier(device_ids = [local_rank])
 
     if local_rank != 0:
         training_dataset = get_dataset(train = True, download = False)
