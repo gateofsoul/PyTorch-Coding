@@ -182,9 +182,9 @@ def train(data_loader, fsdp_model, optimizer, accumulation_number = 1):
         t = t.to(y.device)
         loss = torch.nn.functional.cross_entropy(y, t)
 
-        loss.backward()
+        (loss / accumulation_number).backward()
 
-        if mini_batch_index % accumulation_number == 0:
+        if mini_batch_index % accumulation_number == 0 or (mini_batch_index + 1) == len(data_loader):
             torch.nn.utils.clip_grad_norm_(fsdp_model.parameters(), 1e-1)
             optimizer.step()
             optimizer.zero_grad()

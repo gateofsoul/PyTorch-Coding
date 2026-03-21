@@ -146,9 +146,9 @@ def train(data_loader, ddp_model, optimizer, accumulation_number = 1):
         t = t.to(y.device)
         loss = torch.nn.functional.cross_entropy(y, t)
 
-        scaler.scale(loss).backward()
+        scaler.scale(loss / accumulation_number).backward()
 
-        if mini_batch_index % accumulation_number == 0:
+        if mini_batch_index % accumulation_number == 0 or (mini_batch_index + 1) == len(data_loader):
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(ddp_model.parameters(), 1e-1)
             scaler.step(optimizer)
