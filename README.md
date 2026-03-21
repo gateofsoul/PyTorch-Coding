@@ -1,6 +1,8 @@
 본 repository는 한국항공대 AI융합대학의 2025년 PyTorch 코딩 강의자료입니다. 
 본 강의는 PyTorch 활용법에 대한 것이며, 딥러닝 이론에 대한 강의 영상은 한국항공대 AI융합대학 유튜브 채널(https://www.youtube.com/watch?v=WQF0KGHm76I&list=PLNxPUUOv7SK7eWZQOSzwHzKsM90sezMsG) 에서 시청하실 수 있습니다.
 
+2026.03.21 / Gradient accumulation 관련 내용이 변경되었습니다.
+
 2025.07.26 / PyTorch 2.7의 FSDP API가 변경되어, 이에 맞게 강의자료 및 실습자료를 수정했습니다. 또한 multiple-node 환경에서 checkpoint 기능이 제대로 작동하지 않는 부분이 고쳐졌습니다. 다만 이 코드는 deprecated 예정입니다.
 
 2025.04.08 / DDP와 FSDP대한 각종 내용이 PyTorch 2.4 이후 버전에 맞게 수정되었습니다.
