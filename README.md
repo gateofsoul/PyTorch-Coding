@@ -1,7 +1,7 @@
 본 repository는 한국항공대 AI융합대학의 2025년 PyTorch 코딩 강의자료입니다. 
 본 강의는 PyTorch 활용법에 대한 것이며, 딥러닝 이론에 대한 강의 영상은 한국항공대 AI융합대학 유튜브 채널(https://www.youtube.com/watch?v=WQF0KGHm76I&list=PLNxPUUOv7SK7eWZQOSzwHzKsM90sezMsG) 에서 시청하실 수 있습니다.
 
-2026.03.25 / PyTorch 업데이트 덕분에 torch.compile을 FSDP 및 더 많은 종류의 NVIDIA GPU와 함께 활용할 수 있게 되었습니다. 이와 관련된 내용은 조만간 업데이트 할 예정입니다.
+2026.03.25 / PyTorch 업데이트 덕분에 torch.compile을 FSDP 및 더 많은 종류의 NVIDIA GPU와 함께 활용할 수 있게 되었습니다. 다만 모델이 복잡한 경우 여전히 문제가 있는 상태입니다.
 
 2026.03.21 / Gradient accumulation 관련 내용이 변경되었습니다.
 
